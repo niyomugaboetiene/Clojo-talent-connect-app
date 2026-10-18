@@ -11,7 +11,6 @@ $flash = $_SESSION['flash'] ?? '';
 
 unset($_SESSION['flash']);
 
-// Update an application's status.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
     require_role('sponsor');
     check_csrf();
@@ -41,7 +40,6 @@ $pageTitle = 'Dashboard';
 require 'includes/header.php';
 ?>
 
-<!-- Dashboard heading -->
 <section class="bg-slate-50 border-b border-slate-200">
     <div class="max-w-6xl mx-auto px-5 py-12">
         <p class="text-sm font-semibold uppercase tracking-widest text-amber-700">
@@ -67,7 +65,6 @@ require 'includes/header.php';
     <?php endif; ?>
 
 
-    <!-- TALENT DASHBOARD -->
     <?php if ($role === 'talent'): ?>
 
         <?php
@@ -207,7 +204,6 @@ require 'includes/header.php';
         </div>
 
 
-    <!-- SPONSOR DASHBOARD -->
     <?php elseif ($role === 'sponsor'): ?>
 
         <?php
@@ -397,7 +393,6 @@ require 'includes/header.php';
         <?php endif; ?>
 
 
-    <!-- ADMIN DASHBOARD -->
     <?php else: ?>
 
         <div class="bg-white border border-slate-200 p-8">

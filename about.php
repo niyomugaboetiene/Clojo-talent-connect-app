@@ -53,7 +53,6 @@ $opportunityCount = $pdo->query("
 <body class="bg-white text-slate-800">
 <main>
 
-    <!-- Introduction -->
     <section class="bg-slate-50 border-b border-slate-200">
         <div class="max-w-6xl mx-auto px-5 py-16 md:py-20">
 
@@ -74,7 +73,6 @@ $opportunityCount = $pdo->query("
         </div>
     </section>
 
-    <!-- About the platform -->
     <section class="max-w-6xl mx-auto px-5 py-14">
 
         <div class="grid md:grid-cols-2 gap-12">
@@ -143,7 +141,6 @@ $opportunityCount = $pdo->query("
 
     </section>
 
-    <!-- Platform numbers -->
     <section class="bg-slate-50 border-y border-slate-200">
         <div class="max-w-6xl mx-auto px-5 py-10">
 
@@ -185,7 +182,6 @@ $opportunityCount = $pdo->query("
         </div>
     </section>
 
-    <!-- Project information -->
     <section class="max-w-6xl mx-auto px-5 py-14">
 
         <div class="border-l-4 border-gold pl-6 py-2">

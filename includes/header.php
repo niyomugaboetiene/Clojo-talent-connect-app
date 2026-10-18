@@ -56,7 +56,6 @@ $userRole = $_SESSION['role'] ?? '';
 <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
     <nav class="max-w-6xl mx-auto w-full px-5 py-4 flex items-center justify-between gap-5">
 
-        <!-- Logo -->
         <a href="index.php" class="flex items-center gap-3 shrink-0">
             <span class="bg-navy text-gold font-bold text-xl w-10 h-10 flex items-center justify-center">
                 C
@@ -73,7 +72,6 @@ $userRole = $_SESSION['role'] ?? '';
             </span>
         </a>
 
-        <!-- Mobile menu button -->
         <button
             type="button"
             id="menuButton"
@@ -85,7 +83,6 @@ $userRole = $_SESSION['role'] ?? '';
             Menu
         </button>
 
-        <!-- Desktop navigation -->
         <div class="hidden md:flex items-center gap-7 text-sm">
 
             <a href="index.php"
@@ -154,7 +151,6 @@ $userRole = $_SESSION['role'] ?? '';
         </div>
     </nav>
 
-    <!-- Mobile navigation -->
     <div
         id="mobileLinks"
         class="hidden md:hidden border-t border-slate-200 bg-white px-5 py-4 space-y-4 text-sm"

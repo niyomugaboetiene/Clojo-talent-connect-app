@@ -1,5 +1,4 @@
 
-<!-- Page heading -->
 <section class="bg-slate-50 border-b border-slate-200">
     <div class="max-w-6xl mx-auto px-5 py-12">
 
@@ -26,7 +25,6 @@
         </div>
     <?php endif; ?>
 
-    <!-- Overview -->
     <div class="grid sm:grid-cols-3 gap-5 mb-10">
 
         <div class="border border-slate-200 p-5">
@@ -52,7 +50,6 @@
 
     </div>
 
-    <!-- Registered users -->
     <section class="mb-10">
 
         <div class="flex flex-wrap items-end justify-between gap-3 mb-5">
@@ -134,10 +131,8 @@
 
     </section>
 
-    <!-- Profiles and opportunities -->
     <div class="grid lg:grid-cols-2 gap-8">
 
-        <!-- Talent profiles -->
         <section class="border border-slate-200">
 
             <div class="p-5 border-b border-slate-200">
@@ -200,7 +195,6 @@
 
         </section>
 
-        <!-- Opportunities -->
         <section class="border border-slate-200">
 
             <div class="p-5 border-b border-slate-200">

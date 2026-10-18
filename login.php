@@ -49,7 +49,6 @@ require 'includes/header.php';
 
     <div class="grid md:grid-cols-2 gap-12 lg:gap-20 items-start">
 
-        <!-- Welcome text -->
         <div class="md:pt-8">
             <p class="text-sm font-semibold uppercase tracking-widest text-amber-700">
                 CLOJO Talent Connect
@@ -76,7 +75,6 @@ require 'includes/header.php';
             </div>
         </div>
 
-        <!-- Login form -->
         <div class="border border-slate-200 bg-white p-6 md:p-8">
 
             <h2 class="text-2xl font-bold text-slate-900">

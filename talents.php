@@ -57,7 +57,6 @@ $pageTitle = 'Discover talent';
 require 'includes/header.php';
 ?>
 
-<!-- Page heading -->
 <section class="bg-slate-50 border-b border-slate-200">
     <div class="max-w-7xl mx-auto px-5 py-10 md:py-12">
 
@@ -78,8 +77,6 @@ require 'includes/header.php';
 </section>
 
 <section class="max-w-7xl mx-auto px-5 py-10">
-
-    <!-- Search and category filter -->
     <form method="get" action="talents.php"
           class="bg-white border border-slate-200 p-4 mb-8">
 
@@ -146,7 +143,6 @@ require 'includes/header.php';
         </div>
     </form>
 
-    <!-- Directory heading -->
     <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
 
         <div>
@@ -167,14 +163,11 @@ require 'includes/header.php';
 
     <?php if ($talents): ?>
 
-        <!-- Talent cards -->
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
             <?php foreach ($talents as $t): ?>
 
                 <article class="bg-white border border-slate-200 overflow-hidden flex flex-col">
-
-                    <!-- Profile image -->
                     <div class="h-48 bg-slate-100 border-b border-slate-200 flex items-center justify-center overflow-hidden">
 
                         <?php if (!empty($t['image_url'])): ?>
@@ -263,7 +256,6 @@ require 'includes/header.php';
 
     <?php else: ?>
 
-        <!-- Empty results -->
         <div class="bg-white border border-slate-200 p-8 md:p-12 text-center">
 
             <h3 class="text-xl font-bold text-slate-900">

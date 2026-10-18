@@ -3,10 +3,8 @@
 require_once 'db.php';
 require_once 'includes/functions.php';
 
-// Page title for the shared header
 $pageTitle = 'Home';
 
-// Homepage statistics
 $talentCount = $pdo->query("
     SELECT COUNT(*)
     FROM users
@@ -25,7 +23,6 @@ $opportunityCount = $pdo->query("
     WHERE deadline IS NULL OR deadline >= CURDATE()
 ")->fetchColumn();
 
-// Latest talent profiles
 $sql = "
     SELECT
         users.id,
@@ -44,7 +41,6 @@ $sql = "
 
 $talents = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
-// Latest opportunities
 $sql = "
     SELECT
         opportunities.id,
@@ -68,7 +64,6 @@ $opportunities = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
 <?php require 'includes/header.php'; ?>
 
-<!-- Main introduction -->
 <section class="bg-slate-50 border-b border-slate-200">
     <div class="max-w-6xl mx-auto px-5 py-16 md:py-24 grid md:grid-cols-2 gap-12 items-center">
 
@@ -115,7 +110,6 @@ $opportunities = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </section>
 
-<!-- Statistics -->
 <section class="border-b border-slate-200">
     <div class="max-w-6xl mx-auto px-5 py-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
 
@@ -143,7 +137,6 @@ $opportunities = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </section>
 
-<!-- Talents -->
 <section class="max-w-6xl mx-auto px-5 py-16">
 
     <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
@@ -222,7 +215,6 @@ $opportunities = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </section>
 
-<!-- Opportunities -->
 <section class="bg-slate-50 border-y border-slate-200">
     <div class="max-w-6xl mx-auto px-5 py-16">
 
@@ -318,7 +310,6 @@ $opportunities = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </section>
 
-<!-- Join section -->
 <section class="max-w-6xl mx-auto px-5 py-16">
     <div class="bg-navy text-white p-8 md:p-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
 

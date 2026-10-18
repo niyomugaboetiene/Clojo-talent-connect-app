@@ -118,7 +118,6 @@ $pageTitle = 'Opportunities';
 require 'includes/header.php';
 ?>
 
-<!-- Page heading -->
 <section class="bg-slate-50 border-b border-slate-200">
     <div class="max-w-6xl mx-auto px-5 py-12">
         <p class="text-sm font-semibold uppercase tracking-widest text-amber-700">
@@ -149,7 +148,6 @@ require 'includes/header.php';
 
 <section class="max-w-6xl mx-auto px-5 py-10">
 
-    <!-- Feedback messages -->
     <?php if ($error): ?>
         <div class="border border-red-200 bg-red-50 text-red-700 p-4 mb-5 text-sm">
             <?= e($error) ?>
@@ -163,7 +161,6 @@ require 'includes/header.php';
     <?php endif; ?>
 
 
-    <!-- Search -->
     <form method="get" action="opportunities.php"
           class="flex flex-col sm:flex-row gap-3 mb-10">
 
@@ -196,7 +193,6 @@ require 'includes/header.php';
     </form>
 
 
-    <!-- Sponsor form -->
     <?php if (($_SESSION['role'] ?? '') === 'sponsor'): ?>
 
         <div id="create" class="bg-white border border-slate-200 p-6 md:p-8 mb-12">
@@ -328,7 +324,6 @@ require 'includes/header.php';
     <?php endif; ?>
 
 
-    <!-- Results heading -->
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-6">
         <div>
             <h2 class="text-2xl font-bold text-slate-900">
@@ -346,7 +341,6 @@ require 'includes/header.php';
     </div>
 
 
-    <!-- Opportunities list -->
     <?php if ($opps): ?>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">

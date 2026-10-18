@@ -61,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: dashboard.php');
                 exit;
             } catch (PDOException $e) {
-                // Handle a duplicate email if two requests arrive together.
                 if ($e->getCode() === '23000') {
                     $error = 'This email is already registered.';
                 } else {
@@ -95,7 +94,6 @@ require 'includes/header.php';
 <section class="max-w-6xl mx-auto px-5 py-10 md:py-14">
     <div class="grid lg:grid-cols-5 gap-10 lg:gap-14 items-start">
 
-        <!-- Information section -->
         <div class="lg:col-span-2">
             <h2 class="text-2xl font-bold text-slate-900">
                 Be part of the community
@@ -139,7 +137,6 @@ require 'includes/header.php';
             </p>
         </div>
 
-        <!-- Registration form -->
         <div class="lg:col-span-3 bg-white border border-slate-200 p-6 md:p-9">
 
             <h2 class="text-2xl font-bold text-slate-900">

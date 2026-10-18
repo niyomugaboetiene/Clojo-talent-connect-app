@@ -1,7 +1,5 @@
 
 <?php
-
-// Local MySQL connection settings. Update these if your setup is different.
 $host = "localhost";
 $dbname = "clojo_talent_connect";
 $username = "root";

@@ -31,7 +31,6 @@ if ($editing) {
         ) {
             $error = 'Please check your information and image URL.';
         } else {
-            // Make sure the selected category exists.
             if ($cat > 0) {
                 $stmt = $pdo->prepare("
                     SELECT id FROM categories WHERE id = ?
@@ -279,7 +278,6 @@ require 'includes/header.php';
 
     <?php else: ?>
 
-        <!-- Public profile -->
         <div class="bg-white border border-slate-200">
 
             <div class="p-6 md:p-10">

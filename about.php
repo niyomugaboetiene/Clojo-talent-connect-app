@@ -1,6 +1,8 @@
 
 <?php
 require_once 'db.php';
+require 'includes/header.php';
+
 
 $pageTitle = 'About CLOJO';
 
@@ -49,43 +51,6 @@ $opportunityCount = $pdo->query("
 </head>
 
 <body class="bg-white text-slate-800">
-
-<!-- Navigation -->
-<header class="border-b border-slate-200">
-    <nav class="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between gap-5">
-
-        <a href="index.php" class="flex items-center gap-3">
-            <span class="bg-navy text-gold font-bold text-xl w-10 h-10 flex items-center justify-center">
-                C
-            </span>
-
-            <span>
-                <span class="block text-navy font-bold tracking-wide">CLOJO</span>
-                <span class="block text-xs text-slate-500">TALENT CONNECT</span>
-            </span>
-        </a>
-
-        <div class="hidden md:flex items-center gap-7 text-sm">
-            <a href="index.php" class="hover:text-gold">Home</a>
-            <a href="talents.php" class="hover:text-gold">Talents</a>
-            <a href="opportunities.php" class="hover:text-gold">Opportunities</a>
-            <a href="about.php" class="text-navy font-semibold border-b-2 border-gold pb-1">
-                About
-            </a>
-        </div>
-
-        <div class="flex items-center gap-3 text-sm">
-            <a href="login.php" class="hidden sm:inline hover:text-gold">Log in</a>
-
-            <a href="register.php"
-               class="bg-navy text-white px-4 py-2.5 hover:bg-slate-700 transition">
-                Join CLOJO
-            </a>
-        </div>
-
-    </nav>
-</header>
-
 <main>
 
     <!-- Introduction -->
@@ -248,23 +213,6 @@ $opportunityCount = $pdo->query("
 
 </main>
 
-<!-- Footer -->
-<footer class="border-t border-slate-200">
-    <div class="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row justify-between gap-4 text-sm">
-
-        <p class="text-slate-500">
-            &copy; <?= date('Y') ?> CLOJO TALENT CONNECT.
-            Project by ISHIMWE CLAUDE.
-        </p>
-
-        <div class="flex gap-5">
-            <a href="about.php" class="hover:text-amber-700">About</a>
-            <a href="talents.php" class="hover:text-amber-700">Talents</a>
-            <a href="opportunities.php" class="hover:text-amber-700">Opportunities</a>
-        </div>
-
-    </div>
-</footer>
 
 </body>
 </html>

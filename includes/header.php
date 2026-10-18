@@ -48,49 +48,26 @@ $userRole = $_SESSION['role'] ?? '';
         h1, h2, h3, .brand {
             font-family: 'Manrope', sans-serif;
         }
-
-        .hero-grid {
-            background-image:
-                radial-gradient(
-                    circle at 8% 20%,
-                    rgba(217, 167, 46, 0.12),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 95% 80%,
-                    rgba(59, 130, 246, 0.08),
-                    transparent 32%
-                );
-        }
-
-        .card-hover {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 28px rgba(20, 36, 59, 0.09);
-        }
     </style>
 </head>
 
 <body class="bg-white text-slate-800 min-h-screen flex flex-col">
 
-<header class="bg-navy text-white sticky top-0 z-40 border-b border-white/10">
+<header class="bg-white border-b border-slate-200 sticky top-0 z-40">
     <nav class="max-w-6xl mx-auto w-full px-5 py-4 flex items-center justify-between gap-5">
 
         <!-- Logo -->
         <a href="index.php" class="flex items-center gap-3 shrink-0">
-            <span class="w-10 h-10 bg-gold text-navy flex items-center justify-center font-bold text-xl">
+            <span class="bg-navy text-gold font-bold text-xl w-10 h-10 flex items-center justify-center">
                 C
             </span>
 
             <span>
-                <span class="brand block font-bold tracking-wide">
+                <span class="brand block text-navy font-bold tracking-wide">
                     CLOJO
                 </span>
 
-                <span class="block text-[10px] tracking-widest text-gold font-semibold">
+                <span class="block text-xs text-slate-500">
                     TALENT CONNECT
                 </span>
             </span>
@@ -100,7 +77,7 @@ $userRole = $_SESSION['role'] ?? '';
         <button
             type="button"
             id="menuButton"
-            class="md:hidden border border-white/25 px-3 py-2 text-sm"
+            class="md:hidden border border-slate-300 text-navy px-3 py-2 text-sm hover:bg-slate-50"
             aria-label="Toggle navigation"
             aria-controls="mobileLinks"
             aria-expanded="false"
@@ -109,32 +86,38 @@ $userRole = $_SESSION['role'] ?? '';
         </button>
 
         <!-- Desktop navigation -->
-        <div class="hidden md:flex items-center gap-6 text-sm">
+        <div class="hidden md:flex items-center gap-7 text-sm">
 
-            <a href="index.php" class="hover:text-gold transition-colors">
+            <a href="index.php"
+               class="text-navy font-semibold hover:text-gold transition-colors">
                 Home
             </a>
 
-            <a href="talents.php" class="hover:text-gold transition-colors">
+            <a href="talents.php"
+               class="text-slate-600 hover:text-gold transition-colors">
                 Talents
             </a>
 
-            <a href="opportunities.php" class="hover:text-gold transition-colors">
+            <a href="opportunities.php"
+               class="text-slate-600 hover:text-gold transition-colors">
                 Opportunities
             </a>
 
-            <a href="about.php" class="hover:text-gold transition-colors">
+            <a href="about.php"
+               class="text-slate-600 hover:text-gold transition-colors">
                 About
             </a>
 
             <?php if ($isLoggedIn): ?>
 
-                <a href="dashboard.php" class="hover:text-gold transition-colors">
+                <a href="dashboard.php"
+                   class="text-slate-600 hover:text-gold transition-colors">
                     Dashboard
                 </a>
 
                 <?php if ($userRole === 'admin'): ?>
-                    <a href="admin.php" class="hover:text-gold transition-colors">
+                    <a href="admin.php"
+                       class="text-slate-600 hover:text-gold transition-colors">
                         Admin
                     </a>
                 <?php endif; ?>
@@ -148,7 +131,7 @@ $userRole = $_SESSION['role'] ?? '';
 
                     <button
                         type="submit"
-                        class="bg-gold text-navy font-semibold px-4 py-2 hover:bg-amber-300 transition-colors"
+                        class="bg-navy text-white px-4 py-2.5 hover:bg-slate-700 transition"
                     >
                         Logout
                     </button>
@@ -156,14 +139,13 @@ $userRole = $_SESSION['role'] ?? '';
 
             <?php else: ?>
 
-                <a href="login.php" class="hover:text-gold transition-colors">
-                    Login
+                <a href="login.php"
+                   class="text-slate-600 hover:text-gold transition-colors">
+                    Log in
                 </a>
 
-                <a
-                    href="register.php"
-                    class="bg-gold text-navy font-semibold px-4 py-2 hover:bg-amber-300 transition-colors"
-                >
+                <a href="register.php"
+                   class="bg-navy text-white px-4 py-2.5 hover:bg-slate-700 transition">
                     Join CLOJO
                 </a>
 
@@ -175,33 +157,33 @@ $userRole = $_SESSION['role'] ?? '';
     <!-- Mobile navigation -->
     <div
         id="mobileLinks"
-        class="hidden md:hidden border-t border-white/10 px-5 py-4 space-y-4 text-sm"
+        class="hidden md:hidden border-t border-slate-200 bg-white px-5 py-4 space-y-4 text-sm"
     >
 
-        <a class="block hover:text-gold" href="index.php">
+        <a class="block text-slate-700 hover:text-gold" href="index.php">
             Home
         </a>
 
-        <a class="block hover:text-gold" href="talents.php">
+        <a class="block text-slate-700 hover:text-gold" href="talents.php">
             Talents
         </a>
 
-        <a class="block hover:text-gold" href="opportunities.php">
+        <a class="block text-slate-700 hover:text-gold" href="opportunities.php">
             Opportunities
         </a>
 
-        <a class="block hover:text-gold" href="about.php">
+        <a class="block text-slate-700 hover:text-gold" href="about.php">
             About
         </a>
 
         <?php if ($isLoggedIn): ?>
 
-            <a class="block hover:text-gold" href="dashboard.php">
+            <a class="block text-slate-700 hover:text-gold" href="dashboard.php">
                 Dashboard
             </a>
 
             <?php if ($userRole === 'admin'): ?>
-                <a class="block hover:text-gold" href="admin.php">
+                <a class="block text-slate-700 hover:text-gold" href="admin.php">
                     Admin panel
                 </a>
             <?php endif; ?>
@@ -215,7 +197,7 @@ $userRole = $_SESSION['role'] ?? '';
 
                 <button
                     type="submit"
-                    class="bg-gold text-navy font-semibold px-4 py-2"
+                    class="bg-navy text-white px-4 py-2.5 hover:bg-slate-700 transition"
                 >
                     Logout
                 </button>
@@ -223,12 +205,12 @@ $userRole = $_SESSION['role'] ?? '';
 
         <?php else: ?>
 
-            <a class="block hover:text-gold" href="login.php">
-                Login
+            <a class="block text-slate-700 hover:text-gold" href="login.php">
+                Log in
             </a>
 
             <a
-                class="inline-block bg-gold text-navy font-semibold px-4 py-2"
+                class="inline-block bg-navy text-white px-4 py-2.5 hover:bg-slate-700 transition"
                 href="register.php"
             >
                 Join CLOJO

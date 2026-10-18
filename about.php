@@ -1,77 +1,270 @@
 
 <?php
-require_once 'includes/functions.php';
+require_once 'db.php';
+
 $pageTitle = 'About CLOJO';
-require 'includes/header.php';
+
+function clean($value) {
+    return htmlspecialchars((string)($value ?? ''), ENT_QUOTES, 'UTF-8');
+}
+
+$talentCount = $pdo->query("
+    SELECT COUNT(*) FROM users WHERE role = 'talent'
+")->fetchColumn();
+
+$sponsorCount = $pdo->query("
+    SELECT COUNT(*) FROM users WHERE role = 'sponsor'
+")->fetchColumn();
+
+$opportunityCount = $pdo->query("
+    SELECT COUNT(*)
+    FROM opportunities
+    WHERE deadline IS NULL OR deadline >= CURDATE()
+")->fetchColumn();
 ?>
 
-<section class="bg-clojo-navy text-white hero-grid">
-    <div class="max-w-5xl mx-auto px-5 py-16 md:py-20">
-        <p class="text-clojo-gold font-bold uppercase tracking-widest text-sm">
-            About CLOJO
-        </p>
+<!DOCTYPE html>
+<html lang="en">
 
-        <h1 class="text-4xl md:text-5xl font-extrabold mt-3">
-            Talent is everywhere.
-            <br>
-            <span class="text-clojo-gold">
-                Opportunity should be too.
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>About CLOJO Talent Connect</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#14243B',
+                        gold: '#D9A72E'
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body class="bg-white text-slate-800">
+
+<!-- Navigation -->
+<header class="border-b border-slate-200">
+    <nav class="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between gap-5">
+
+        <a href="index.php" class="flex items-center gap-3">
+            <span class="bg-navy text-gold font-bold text-xl w-10 h-10 flex items-center justify-center">
+                C
             </span>
-        </h1>
 
-        <p class="text-slate-300 text-lg mt-6 max-w-3xl leading-8">
-            CLOJO Talent Connect helps talented people share their skills and connect with sponsors who can support their next step.
-        </p>
-    </div>
-</section>
-
-<section class="max-w-6xl mx-auto px-5 py-14 grid md:grid-cols-3 gap-6">
-    <article class="bg-white rounded-2xl border p-6">
-        <div class="text-3xl">🌟</div>
-        <h2 class="text-xl font-extrabold mt-4">Show your talent</h2>
-        <p class="text-slate-600 mt-3 leading-7">
-            Create a profile and help people discover what you can do.
-        </p>
-    </article>
-
-    <article class="bg-white rounded-2xl border p-6">
-        <div class="text-3xl">🤝</div>
-        <h2 class="text-xl font-extrabold mt-4">Find support</h2>
-        <p class="text-slate-600 mt-3 leading-7">
-            Discover mentorship, training, equipment, funding, and exposure.
-        </p>
-    </article>
-
-    <article class="bg-white rounded-2xl border p-6">
-        <div class="text-3xl">🚀</div>
-        <h2 class="text-xl font-extrabold mt-4">Grow together</h2>
-        <p class="text-slate-600 mt-3 leading-7">
-            Give sponsors and talented people a simple way to start collaborations.
-        </p>
-    </article>
-</section>
-
-<section class="max-w-6xl mx-auto px-5 pb-14">
-    <div class="rounded-3xl bg-amber-50 border border-amber-200 p-8 md:p-10">
-        <p class="text-amber-800 uppercase tracking-widest text-sm font-bold">
-            The project
-        </p>
-
-        <h2 class="text-3xl font-extrabold text-clojo-navy mt-2">
-            Built for possibility.
-        </h2>
-
-        <p class="text-slate-700 mt-4 leading-7 max-w-3xl">
-            CLOJO TALENT CONNECT is a student full-stack project owned by
-            <strong>ISHIMWE</strong>. It uses Core PHP and MySQL to demonstrate how a website can connect talent with opportunity.
-        </p>
-
-        <a href="register.php" class="inline-block mt-6 bg-clojo-navy text-white px-6 py-3 rounded-full font-bold">
-            Join CLOJO →
+            <span>
+                <span class="block text-navy font-bold tracking-wide">CLOJO</span>
+                <span class="block text-xs text-slate-500">TALENT CONNECT</span>
+            </span>
         </a>
-    </div>
-</section>
 
-<?php
-require 'includes/footer.php';
-?>
+        <div class="hidden md:flex items-center gap-7 text-sm">
+            <a href="index.php" class="hover:text-gold">Home</a>
+            <a href="talents.php" class="hover:text-gold">Talents</a>
+            <a href="opportunities.php" class="hover:text-gold">Opportunities</a>
+            <a href="about.php" class="text-navy font-semibold border-b-2 border-gold pb-1">
+                About
+            </a>
+        </div>
+
+        <div class="flex items-center gap-3 text-sm">
+            <a href="login.php" class="hidden sm:inline hover:text-gold">Log in</a>
+
+            <a href="register.php"
+               class="bg-navy text-white px-4 py-2.5 hover:bg-slate-700 transition">
+                Join CLOJO
+            </a>
+        </div>
+
+    </nav>
+</header>
+
+<main>
+
+    <!-- Introduction -->
+    <section class="bg-slate-50 border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-5 py-16 md:py-20">
+
+            <p class="text-sm font-semibold uppercase tracking-widest text-amber-700">
+                About CLOJO
+            </p>
+
+            <h1 class="text-4xl md:text-5xl font-bold text-navy mt-4 max-w-3xl leading-tight">
+                A place to share talent and find support.
+            </h1>
+
+            <p class="mt-5 text-slate-600 leading-7 max-w-2xl">
+                CLOJO Talent Connect brings talented people and sponsors together.
+                Talents can create profiles and look for opportunities, while
+                sponsors can post opportunities and review applications.
+            </p>
+
+        </div>
+    </section>
+
+    <!-- About the platform -->
+    <section class="max-w-6xl mx-auto px-5 py-14">
+
+        <div class="grid md:grid-cols-2 gap-12">
+
+            <div>
+                <h2 class="text-2xl font-bold text-navy">
+                    Why CLOJO?
+                </h2>
+
+                <p class="mt-4 text-slate-600 leading-7">
+                    Many people have skills in areas such as technology, music,
+                    fashion, sports, photography and creative arts. However,
+                    finding someone who can provide support is not always easy.
+                </p>
+
+                <p class="mt-4 text-slate-600 leading-7">
+                    CLOJO provides a place where people can introduce their work
+                    and find opportunities that match their interests. Support
+                    may include funding, equipment, mentorship, training or exposure.
+                </p>
+            </div>
+
+            <div class="border border-slate-200 p-6 md:p-8">
+
+                <h2 class="text-2xl font-bold text-navy">
+                    How it works
+                </h2>
+
+                <div class="mt-6 space-y-6">
+
+                    <div class="flex gap-4">
+                        <span class="text-amber-700 font-bold">01</span>
+                        <div>
+                            <h3 class="font-semibold text-navy">Create an account</h3>
+                            <p class="text-sm text-slate-600 mt-1">
+                                Register as a talent or a sponsor.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <span class="text-amber-700 font-bold">02</span>
+                        <div>
+                            <h3 class="font-semibold text-navy">Find or post opportunities</h3>
+                            <p class="text-sm text-slate-600 mt-1">
+                                Talents can browse opportunities, and sponsors can
+                                publish available support.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <span class="text-amber-700 font-bold">03</span>
+                        <div>
+                            <h3 class="font-semibold text-navy">Submit applications</h3>
+                            <p class="text-sm text-slate-600 mt-1">
+                                Talents can apply and check the status of their applications.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Platform numbers -->
+    <section class="bg-slate-50 border-y border-slate-200">
+        <div class="max-w-6xl mx-auto px-5 py-10">
+
+            <h2 class="text-2xl font-bold text-navy">
+                CLOJO at a glance
+            </h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-8">
+
+                <div>
+                    <p class="text-3xl font-bold text-navy">
+                        <?= (int) $talentCount ?>
+                    </p>
+                    <p class="text-sm text-slate-500 mt-2">
+                        Registered talents
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-3xl font-bold text-navy">
+                        <?= (int) $sponsorCount ?>
+                    </p>
+                    <p class="text-sm text-slate-500 mt-2">
+                        Registered sponsors
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-3xl font-bold text-navy">
+                        <?= (int) $opportunityCount ?>
+                    </p>
+                    <p class="text-sm text-slate-500 mt-2">
+                        Available opportunities
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Project information -->
+    <section class="max-w-6xl mx-auto px-5 py-14">
+
+        <div class="border-l-4 border-gold pl-6 py-2">
+
+            <h2 class="text-2xl font-bold text-navy">
+                About this project
+            </h2>
+
+            <p class="mt-4 text-slate-600 leading-7 max-w-3xl">
+                CLOJO Talent Connect is a student project by
+                <strong>ISHIMWE Claude</strong>. The website is built with
+                PHP, MySQL, HTML and Tailwind CSS. It demonstrates how a web
+                platform can be used to manage talent profiles, opportunities
+                and applications.
+            </p>
+
+            <a href="register.php"
+               class="inline-block mt-6 bg-navy text-white px-5 py-3 hover:bg-slate-700 transition">
+                Create an account &rarr;
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="border-t border-slate-200">
+    <div class="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row justify-between gap-4 text-sm">
+
+        <p class="text-slate-500">
+            &copy; <?= date('Y') ?> CLOJO TALENT CONNECT.
+            Project by ISHIMWE CLAUDE.
+        </p>
+
+        <div class="flex gap-5">
+            <a href="about.php" class="hover:text-amber-700">About</a>
+            <a href="talents.php" class="hover:text-amber-700">Talents</a>
+            <a href="opportunities.php" class="hover:text-amber-700">Opportunities</a>
+        </div>
+
+    </div>
+</footer>
+
+</body>
+</html>

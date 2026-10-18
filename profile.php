@@ -1,6 +1,6 @@
 
 <?php
-require 'db.php';
+require_once 'db.php';
 require_once 'includes/functions.php';
 
 $viewId = (int) ($_GET['id'] ?? 0);
@@ -27,46 +27,57 @@ if ($editing) {
             strlen($bio) > 1500 ||
             strlen($skills) > 500 ||
             strlen($location) > 100 ||
-            (
-                $image !== '' &&
-                !filter_var($image, FILTER_VALIDATE_URL)
-            )
+            ($image !== '' && !filter_var($image, FILTER_VALIDATE_URL))
         ) {
-            $error = 'Check your information. The image must be a valid URL.';
+            $error = 'Please check your information and image URL.';
         } else {
-            $q = $pdo->prepare("
-                INSERT INTO talent_profiles (
-                    user_id,
-                    bio,
-                    skills,
-                    location,
-                    category_id,
-                    image_url
-                )
-                VALUES (?, ?, ?, ?, NULLIF(?, 0), ?)
-                ON DUPLICATE KEY UPDATE
-                    bio = VALUES(bio),
-                    skills = VALUES(skills),
-                    location = VALUES(location),
-                    category_id = NULLIF(VALUES(category_id), 0),
-                    image_url = VALUES(image_url)
-            ");
+            // Make sure the selected category exists.
+            if ($cat > 0) {
+                $stmt = $pdo->prepare("
+                    SELECT id FROM categories WHERE id = ?
+                ");
+                $stmt->execute([$cat]);
 
-            $q->execute([
-                $viewId,
-                $bio,
-                $skills,
-                $location,
-                $cat,
-                $image
-            ]);
+                if (!$stmt->fetch()) {
+                    $error = 'Please select a valid category.';
+                }
+            }
 
-            $success = 'Your profile has been saved.';
+            if ($error === '') {
+                $stmt = $pdo->prepare("
+                    INSERT INTO talent_profiles (
+                        user_id,
+                        bio,
+                        skills,
+                        location,
+                        category_id,
+                        image_url
+                    )
+                    VALUES (?, ?, ?, NULLIF(?, ''), NULLIF(?, 0), NULLIF(?, ''))
+                    ON DUPLICATE KEY UPDATE
+                        bio = VALUES(bio),
+                        skills = VALUES(skills),
+                        location = NULLIF(VALUES(location), ''),
+                        category_id = NULLIF(VALUES(category_id), 0),
+                        image_url = NULLIF(VALUES(image_url), '')
+                ");
+
+                $stmt->execute([
+                    $viewId,
+                    $bio,
+                    $skills,
+                    $location,
+                    $cat,
+                    $image
+                ]);
+
+                $success = 'Your profile has been saved.';
+            }
         }
     }
 }
 
-$q = $pdo->prepare("
+$stmt = $pdo->prepare("
     SELECT
         tp.*,
         u.name,
@@ -78,8 +89,8 @@ $q = $pdo->prepare("
     WHERE u.id = ? AND u.role = 'talent'
 ");
 
-$q->execute([$viewId]);
-$profile = $q->fetch();
+$stmt->execute([$viewId]);
+$profile = $stmt->fetch();
 
 if (!$profile) {
     http_response_code(404);
@@ -87,7 +98,7 @@ if (!$profile) {
 }
 
 $categories = $pdo->query("
-    SELECT *
+    SELECT id, name
     FROM categories
     ORDER BY name
 ")->fetchAll();
@@ -97,38 +108,52 @@ $pageTitle = $editing ? 'Edit my profile' : $profile['name'];
 require 'includes/header.php';
 ?>
 
-<section class="max-w-5xl mx-auto px-5 py-12">
+<section class="bg-slate-50 border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-5 py-10">
+        <p class="text-sm font-semibold uppercase tracking-widest text-amber-700">
+            CLOJO Talent Connect
+        </p>
+
+        <?php if ($editing): ?>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mt-3">
+                Your talent profile
+            </h1>
+
+            <p class="text-slate-600 mt-3">
+                Add your skills and experience so people can learn more about you.
+            </p>
+        <?php else: ?>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mt-3">
+                Talent profile
+            </h1>
+
+            <p class="text-slate-600 mt-3">
+                Get to know the person behind the talent.
+            </p>
+        <?php endif; ?>
+    </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-5 py-10">
 
     <?php if ($editing): ?>
 
-        <!-- Edit Profile Section -->
         <div class="max-w-3xl mx-auto">
 
-            <p class="text-amber-700 uppercase tracking-widest text-sm font-bold">
-                Your creative identity
-            </p>
-
-            <h1 class="text-3xl font-extrabold text-clojo-navy mt-2">
-                Build your talent profile
-            </h1>
-
-            <p class="text-slate-500 mt-2 mb-7">
-                Tell sponsors and the community what you can do.
-            </p>
-
             <?php if ($error): ?>
-                <p class="bg-red-50 text-red-700 rounded-xl p-3 mb-4">
+                <div class="border border-red-200 bg-red-50 text-red-700 p-4 mb-5 text-sm">
                     <?= e($error) ?>
-                </p>
+                </div>
             <?php endif; ?>
 
             <?php if ($success): ?>
-                <p class="bg-green-50 text-green-700 rounded-xl p-3 mb-4">
+                <div class="border border-green-200 bg-green-50 text-green-800 p-4 mb-5 text-sm">
                     <?= e($success) ?>
-                </p>
+                </div>
             <?php endif; ?>
 
-            <form method="post" class="bg-white border rounded-2xl p-6 md:p-8">
+            <form method="post" action="profile.php"
+                  class="bg-white border border-slate-200 p-6 md:p-8">
 
                 <input
                     type="hidden"
@@ -136,175 +161,199 @@ require 'includes/header.php';
                     value="<?= e(csrf_token()) ?>"
                 >
 
-                <label class="block font-semibold mb-2">
-                    Talent category
-                </label>
+                <div class="mb-6">
+                    <label for="category_id"
+                           class="block text-sm font-semibold text-slate-700 mb-2">
+                        Talent category
+                    </label>
 
-                <select
-                    name="category_id"
-                    class="w-full border rounded-xl p-3 mb-5 bg-white"
-                >
-                    <option value="0">Choose a category</option>
+                    <select
+                        id="category_id"
+                        name="category_id"
+                        class="w-full border border-slate-300 bg-white px-4 py-3 focus:outline-none focus:border-amber-600"
+                    >
+                        <option value="0">Choose a category</option>
 
-                    <?php foreach ($categories as $c): ?>
-                        <option
-                            value="<?= (int) $c['id'] ?>"
-                            <?= (int) ($profile['category_id'] ?? 0) === (int) $c['id'] ? 'selected' : '' ?>
-                        >
-                            <?= e($c['name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                        <?php foreach ($categories as $c): ?>
+                            <option
+                                value="<?= (int) $c['id'] ?>"
+                                <?= (int) ($profile['category_id'] ?? 0) === (int) $c['id'] ? 'selected' : '' ?>
+                            >
+                                <?= e($c['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-                <label class="block font-semibold mb-2">
-                    Location
-                </label>
+                <div class="mb-6">
+                    <label for="location"
+                           class="block text-sm font-semibold text-slate-700 mb-2">
+                        Location
+                    </label>
 
-                <input
-                    name="location"
-                    value="<?= e($profile['location'] ?? '') ?>"
-                    placeholder="Kigali, Rwanda"
-                    class="w-full border rounded-xl p-3 mb-5"
-                >
+                    <input
+                        id="location"
+                        name="location"
+                        maxlength="100"
+                        value="<?= e($profile['location'] ?? '') ?>"
+                        placeholder="Kigali, Rwanda"
+                        class="w-full border border-slate-300 px-4 py-3 focus:outline-none focus:border-amber-600"
+                    >
+                </div>
 
-                <label class="block font-semibold mb-2">
-                    Skills
-                </label>
+                <div class="mb-6">
+                    <label for="skills"
+                           class="block text-sm font-semibold text-slate-700 mb-2">
+                        Skills
+                    </label>
 
-                <input
-                    name="skills"
-                    maxlength="500"
-                    value="<?= e($profile['skills'] ?? '') ?>"
-                    placeholder="Video editing, singing, PHP..."
-                    class="w-full border rounded-xl p-3 mb-5"
-                >
+                    <input
+                        id="skills"
+                        name="skills"
+                        maxlength="500"
+                        value="<?= e($profile['skills'] ?? '') ?>"
+                        placeholder="Video editing, singing, web development..."
+                        class="w-full border border-slate-300 px-4 py-3 focus:outline-none focus:border-amber-600"
+                    >
 
-                <label class="block font-semibold mb-2">
-                    Portfolio image URL (optional)
-                </label>
+                    <p class="text-xs text-slate-500 mt-2">
+                        List the skills you have or the areas you work in.
+                    </p>
+                </div>
 
-                <input
-                    type="url"
-                    name="image_url"
-                    value="<?= e($profile['image_url'] ?? '') ?>"
-                    placeholder="https://example.com/photo.jpg"
-                    class="w-full border rounded-xl p-3 mb-5"
-                >
+                <div class="mb-6">
+                    <label for="image_url"
+                           class="block text-sm font-semibold text-slate-700 mb-2">
+                        Profile image URL (optional)
+                    </label>
 
-                <label class="block font-semibold mb-2">
-                    About you
-                </label>
+                    <input
+                        id="image_url"
+                        type="url"
+                        name="image_url"
+                        value="<?= e($profile['image_url'] ?? '') ?>"
+                        placeholder="https://example.com/photo.jpg"
+                        class="w-full border border-slate-300 px-4 py-3 focus:outline-none focus:border-amber-600"
+                    >
+                </div>
 
-                <textarea
-                    name="bio"
-                    maxlength="1500"
-                    rows="5"
-                    class="w-full border rounded-xl p-3 mb-6"
-                    placeholder="Tell people about your talent and goals..."
-                ><?= e($profile['bio'] ?? '') ?></textarea>
+                <div class="mb-7">
+                    <label for="bio"
+                           class="block text-sm font-semibold text-slate-700 mb-2">
+                        About you
+                    </label>
 
-                <button class="bg-clojo-navy text-white rounded-xl px-6 py-3 font-bold">
-                    Save profile
-                </button>
+                    <textarea
+                        id="bio"
+                        name="bio"
+                        maxlength="1500"
+                        rows="6"
+                        placeholder="Tell people about your experience, talent and goals."
+                        class="w-full border border-slate-300 px-4 py-3 focus:outline-none focus:border-amber-600"
+                    ><?= e($profile['bio'] ?? '') ?></textarea>
+                </div>
 
-                <a href="dashboard.php" class="ml-3 text-slate-600">
-                    Back to dashboard
-                </a>
+                <div class="flex flex-wrap items-center gap-4">
+                    <button
+                        type="submit"
+                        class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 font-semibold"
+                    >
+                        Save profile
+                    </button>
+
+                    <a href="dashboard.php"
+                       class="text-slate-600 hover:text-slate-900 text-sm font-semibold">
+                        Back to dashboard
+                    </a>
+
+                    <?php if (!empty($profile['id'])): ?>
+                        <a href="profile.php?id=<?= $viewId ?>"
+                           class="text-amber-700 hover:underline text-sm font-semibold">
+                            View public profile
+                        </a>
+                    <?php endif; ?>
+                </div>
 
             </form>
         </div>
 
     <?php else: ?>
 
-        <!-- Public Talent Profile -->
-        <div class="bg-white rounded-3xl border overflow-hidden">
+        <!-- Public profile -->
+        <div class="bg-white border border-slate-200">
 
-            <div class="bg-clojo-navy h-44 hero-grid"></div>
+            <div class="p-6 md:p-10">
+                <div class="flex flex-col sm:flex-row sm:items-start gap-6">
 
-            <div class="px-6 md:px-10 pb-10">
+                    <div class="w-28 h-28 shrink-0 border border-slate-200 bg-slate-100 flex items-center justify-center overflow-hidden text-3xl font-bold text-slate-700">
+                        <?php if (!empty($profile['image_url'])): ?>
+                            <img
+                                src="<?= e($profile['image_url']) ?>"
+                                alt="<?= e($profile['name']) ?>"
+                                class="w-full h-full object-cover"
+                            >
+                        <?php else: ?>
+                            <?= e(strtoupper(substr($profile['name'], 0, 1))) ?>
+                        <?php endif; ?>
+                    </div>
 
-                <div class="-mt-16 w-32 h-32 rounded-3xl bg-clojo-gold border-4 border-white overflow-hidden flex items-center justify-center text-5xl font-extrabold">
-
-                    <?php if ($profile['image_url']): ?>
-                        <img
-                            src="<?= e($profile['image_url']) ?>"
-                            alt="<?= e($profile['name']) ?>"
-                            class="w-full h-full object-cover"
-                        >
-                    <?php else: ?>
-                        <?= e(strtoupper(substr($profile['name'], 0, 1))) ?>
-                    <?php endif; ?>
-
-                </div>
-
-                <div class="mt-5 flex flex-wrap justify-between gap-4">
-
-                    <div>
-                        <p class="text-amber-700 text-sm font-bold">
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-amber-700">
                             <?= e($profile['category_name'] ?? 'CLOJO Talent') ?>
                         </p>
 
-                        <h1 class="text-3xl md:text-4xl font-extrabold text-clojo-navy mt-1">
+                        <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mt-2">
                             <?= e($profile['name']) ?>
                         </h1>
 
-                        <p class="text-slate-500 mt-2">
-                            📍 <?= e($profile['location'] ?: 'Rwanda') ?>
+                        <p class="text-slate-600 mt-3">
+                            <?= e($profile['location'] ?: 'Rwanda') ?>
                         </p>
-                    </div>
 
-                    <?php
-                    if (
-                        !empty($_SESSION['user_id']) &&
-                        (int) $_SESSION['user_id'] === $viewId
-                    ):
-                    ?>
-                        <a
-                            href="profile.php"
-                            class="bg-clojo-gold text-clojo-navy px-5 py-3 rounded-full font-bold"
-                        >
-                            Edit my profile
-                        </a>
-                    <?php endif; ?>
+                        <?php if (
+                            !empty($_SESSION['user_id']) &&
+                            (int) $_SESSION['user_id'] === $viewId
+                        ): ?>
+                            <a
+                                href="profile.php"
+                                class="inline-block mt-5 bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 text-sm font-semibold"
+                            >
+                                Edit my profile
+                            </a>
+                        <?php endif; ?>
+                    </div>
 
                 </div>
 
-                <div class="grid md:grid-cols-[1.4fr_.8fr] gap-10 mt-10">
+                <div class="grid md:grid-cols-2 gap-10 mt-10 pt-8 border-t border-slate-200">
 
                     <div>
-                        <h2 class="text-xl font-extrabold">
-                            About me
+                        <h2 class="text-xl font-bold text-slate-900">
+                            About
                         </h2>
 
-                        <p class="text-slate-600 leading-7 mt-3 whitespace-pre-line">
-                            <?= e($profile['bio'] ?: 'This talent is still writing their story.') ?>
-                        </p>
+                        <p class="text-slate-600 leading-7 mt-4 whitespace-pre-line"><?= e($profile['bio'] ?: 'This talent has not added a biography yet.') ?></p>
                     </div>
 
-                    <div class="bg-slate-50 rounded-2xl p-6">
-
-                        <h2 class="font-extrabold text-xl">
-                            Skills &amp; interests
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">
+                            Skills and interests
                         </h2>
 
-                        <p class="text-slate-600 mt-3">
-                            <?= e($profile['skills'] ?: 'Skills have not been added yet.') ?>
-                        </p>
+                        <p class="text-slate-600 leading-7 mt-4 whitespace-pre-line"><?= e($profile['skills'] ?: 'No skills have been added yet.') ?></p>
 
-                        <div class="border-t mt-5 pt-5">
-                            <p class="text-xs uppercase tracking-widest text-slate-400 font-bold">
+                        <div class="border-t border-slate-200 mt-6 pt-5">
+                            <p class="text-sm font-semibold text-slate-700">
                                 Contact
                             </p>
 
-                            <p class="mt-2">
+                            <p class="text-slate-600 mt-2 break-words">
                                 <?= e($profile['email']) ?>
                             </p>
                         </div>
-
                     </div>
 
                 </div>
-
             </div>
         </div>
 

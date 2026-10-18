@@ -1,51 +1,61 @@
 
 <?php
-require 'db.php';
+require_once 'db.php';
 require_once 'includes/functions.php';
 
 require_role('talent');
 
+// Applications must be submitted through a POST request.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: opportunities.php');
     exit;
 }
 
+// Verify that the request came from a valid form.
 check_csrf();
 
-$id = (int)($_POST['opportunity_id'] ?? 0);
+$opportunityId = (int) ($_POST['opportunity_id'] ?? 0);
+$talentId = (int) $_SESSION['user_id'];
 
-$q = $pdo->prepare(
-    'SELECT id FROM opportunities
-     WHERE id = ?
-     AND (deadline IS NULL OR deadline >= CURDATE())'
-);
+// Check whether the opportunity exists and is still available.
+$stmt = $pdo->prepare("
+    SELECT id
+    FROM opportunities
+    WHERE id = ?
+      AND (deadline IS NULL OR deadline >= CURDATE())
+");
+$stmt->execute([$opportunityId]);
 
-$q->execute([$id]);
+$opportunity = $stmt->fetch();
 
-if (!$q->fetch()) {
+if (!$opportunity) {
     $_SESSION['flash'] = 'That opportunity is no longer available.';
-} else {
-    $q = $pdo->prepare(
-        'SELECT id FROM applications
-         WHERE talent_id = ? AND opportunity_id = ?'
-    );
+    header('Location: opportunities.php');
+    exit;
+}
 
-    $q->execute([$_SESSION['user_id'], $id]);
+try {
+    // Save the application.
+    $stmt = $pdo->prepare("
+        INSERT INTO applications (talent_id, opportunity_id)
+        VALUES (?, ?)
+    ");
 
-    if ($q->fetch()) {
+    $stmt->execute([$talentId, $opportunityId]);
+
+    $_SESSION['flash'] = 'Your application has been submitted.';
+
+} catch (PDOException $e) {
+    // Error code 23000 covers integrity constraint violations,
+    // including the unique key preventing duplicate applications.
+    if ($e->getCode() === '23000') {
         $_SESSION['flash'] = 'You have already applied for this opportunity.';
     } else {
-        $q = $pdo->prepare(
-            'INSERT INTO applications(talent_id, opportunity_id)
-             VALUES(?, ?)'
-        );
-
-        $q->execute([$_SESSION['user_id'], $id]);
-
-        $_SESSION['flash'] = 'Your application has been submitted.';
+        throw $e;
     }
 }
 
+// Return the talent to their dashboard.
 header('Location: dashboard.php');
 exit;
 ?>
